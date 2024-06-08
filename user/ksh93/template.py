@@ -1,0 +1,14 @@
+pkgname = "ksh93"
+pkgver = "1.0.8"
+pkgrel = 0
+build_style = "makefile"
+make_cmd = "bin/package"
+make_build_target = "make"
+make_check_target = "test"
+pkgdesc = "Thermal daemon for x86_64-based Intel CPUs"
+maintainer = "miko <mikoxyzzz@gmail.com"
+license = "EPL-2.0"
+url = "https://github.com/ksh93/ksh"
+source = f"{url}/archive/refs/tags/v{pkgver}.tar.gz"
+sha256 = "b7df06bbd813bf039893a533d1e30073102a2494f6fdd432ae7c05f376c7cc15"
+hardening = ["cfi", "vis"]
