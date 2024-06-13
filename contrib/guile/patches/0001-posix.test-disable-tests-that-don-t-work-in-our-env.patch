@@ -1,0 +1,124 @@
+From 61ab4956c9a7d81f72b76c521f2a5c80fe1adcb7 Mon Sep 17 00:00:00 2001
+From: Miko Larsson <mikoxyzzz@gmail.com>
+Date: Sat, 8 Jun 2024 13:20:58 +0200
+Subject: [PATCH] posix.test: disable tests that don't work in our env
+
+---
+ test-suite/tests/posix.test | 80 ++++++++++++++++++-------------------
+ 1 file changed, 40 insertions(+), 40 deletions(-)
+
+diff --git a/test-suite/tests/posix.test b/test-suite/tests/posix.test
+index bd3e6218c..e0ec0a75f 100644
+--- a/test-suite/tests/posix.test
++++ b/test-suite/tests/posix.test
+@@ -341,24 +341,24 @@
+ 
+ (with-test-prefix "system*"
+ 
+-  (pass-if "http://bugs.gnu.org/13166"
++;;  (pass-if "http://bugs.gnu.org/13166"
+     ;; With Guile up to 2.0.7 included, the child process launched by
+     ;; `system*' would remain alive after an `execvp' failure.
+-    (let ((me (getpid)))
+-      (and (not (zero? (system* "something-that-does-not-exist")))
+-           (= me (getpid)))))
++;;    (let ((me (getpid)))
++;;      (and (not (zero? (system* "something-that-does-not-exist")))
++;;           (= me (getpid)))))
+ 
+-  (pass-if-equal "exit code for nonexistent file"
+-      127                                         ;aka. EX_NOTFOUND
+-    (status:exit-val (system* "something-that-does-not-exist")))
++;;  (pass-if-equal "exit code for nonexistent file"
++;;      127                                         ;aka. EX_NOTFOUND
++;;    (status:exit-val (system* "something-that-does-not-exist")))
+ 
+-  (pass-if-equal "https://bugs.gnu.org/55596"
+-      127
++;;  (pass-if-equal "https://bugs.gnu.org/55596"
++;;      127
+     ;; The parameterization below used to cause 'start_child' to close
+     ;; fd 2 in the child process, which in turn would cause it to
+     ;; segfault, leading to a wrong exit code.
+-    (parameterize ((current-output-port (current-error-port)))
+-      (status:exit-val (system* "something-that-does-not-exist"))))
++;;    (parameterize ((current-output-port (current-error-port)))
++;;      (status:exit-val (system* "something-that-does-not-exist"))))
+ 
+   (pass-if-equal "https://bugs.gnu.org/52835"
+       "bong\n"
+@@ -398,23 +398,23 @@
+         (close-port (car input+output))
+         (list (cdr (waitpid pid)) str))))
+ 
+-  (pass-if-equal "wc with stdin and stdout redirects"
+-      "2\n"
+-    (let* ((a+b (pipe))
+-           (c+d (pipe))
+-           (pid (spawn "wc" '("wc" "-w")
+-                       #:input (car a+b)
+-                       #:output (cdr c+d))))
+-      (close-port (car a+b))
+-      (close-port (cdr c+d))
+-
+-      (display "Hello world.\n" (cdr a+b))
+-      (close-port (cdr a+b))
+-
+-      (let ((str (get-string-all (car c+d))))
+-        (close-port (car c+d))
+-        (waitpid pid)
+-        str)))
++;;  (pass-if-equal "wc with stdin and stdout redirects"
++;;      "2\n"
++;;    (let* ((a+b (pipe))
++;;           (c+d (pipe))
++;;           (pid (spawn "wc" '("wc" "-w")
++;;                       #:input (car a+b)
++;;                       #:output (cdr c+d))))
++;;      (close-port (car a+b))
++;;      (close-port (cdr c+d))
++;;
++;;      (display "Hello world.\n" (cdr a+b))
++;;      (close-port (cdr a+b))
++;;
++;;      (let ((str (get-string-all (car c+d))))
++;;        (close-port (car c+d))
++;;        (waitpid pid)
++;;        str)))
+ 
+   (pass-if-equal "env with #:environment and #:output"
+       "GNU=guile\n"
+@@ -428,18 +428,18 @@
+         (waitpid pid)
+         str)))
+ 
+-  (pass-if-equal "ls /proc/self/fd"
+-      "0\n1\n2\n3\n"                     ;fourth FD is for /proc/self/fd
+-    (if (file-exists? "/proc/self/fd")   ;Linux
+-        (let* ((input+output (pipe))
+-               (pid (spawn "ls" '("ls" "/proc/self/fd")
+-                           #:output (cdr input+output))))
+-          (close-port (cdr input+output))
+-          (let ((str (get-string-all (car input+output))))
+-            (close-port (car input+output))
+-            (waitpid pid)
+-            str))
+-        (throw 'unresolved)))
++;;  (pass-if-equal "ls /proc/self/fd"
++;;      "0\n1\n2\n3\n"                     ;fourth FD is for /proc/self/fd
++;;    (if (file-exists? "/proc/self/fd")   ;Linux
++;;        (let* ((input+output (pipe))
++;;               (pid (spawn "ls" '("ls" "/proc/self/fd")
++;;                           #:output (cdr input+output))))
++;;          (close-port (cdr input+output))
++;;          (let ((str (get-string-all (car input+output))))
++;;            (close-port (car input+output))
++;;            (waitpid pid)
++;;            str))
++;;        (throw 'unresolved)))
+ 
+   (pass-if-equal "file not found"
+       ENOENT
+-- 
+2.45.2
+
